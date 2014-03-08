@@ -195,20 +195,18 @@ default
         if (llGetAgentInfo(owner) & AGENT_TYPING)
         {
             list originalColors;
+            integer rootfaces = 0;
+            list rootlist;
             integer i = 0;
             for (; i < primListLen; ++i)
             {
 	        integer link = llList2Integer(primsToRecolor, i);
                 if (LINK_ROOT == link)
                 {
-                    list rootlist;
-                    integer faces = llGetNumberOfSides();
-                    while (faces > 0)
-                    {
-                        --faces;
-                        rootlist += [PRIM_COLOR, faces, llGetColor(faces), llGetAlpha(faces)];
-                    }
-                    originalColors = rootlist + originalColors;
+                    rootfaces = llGetNumberOfSides();
+                    integer i = 0;
+                    while (; i < faces; ++i)
+                        rootlist += llGetColor(i);
                 }
                 else
                 {
@@ -226,6 +224,8 @@ default
                 llSleep(0.01); // Liru Note: Should we even bother, Forced Delay from above call could be enough
             } while(llGetAgentInfo(owner) & AGENT_TYPING);
             DebugMessage(llDumpList2String(originalColors, "  |  "));
+            for(--rootfaces; rootfaces >= 0; --rootfaces)
+                llSetColor(llList2Float(rootlist, rootfaces), rootface);
             llSetLinkPrimitiveParamsFast(LINK_ROOT, originalColors);
         }
     }
